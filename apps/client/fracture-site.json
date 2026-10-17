@@ -1,0 +1,12 @@
+{
+  "compatibilityDate": "2026-02-01",
+  "assetsDirectory": "dist",
+  "spa": true,
+  "modules": [
+    {
+      "name": "index",
+      "type": "esm",
+      "path": "index.js"
+    }
+  ]
+}

@@ -1,0 +1,23 @@
+{
+  "name": "fracture-build",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "zx scripts/build.mjs",
+    "dev": "node scripts/dev.mjs",
+    "test": "zx scripts/test.mjs",
+    "smoke": "node scripts/smoke.mjs",
+    "smoke:solo": "node scripts/smoke-solo.mjs",
+    "typecheck": "zx scripts/typecheck.mjs",
+    "start": "zx scripts/start.mjs",
+    "deploy:vercel": "zx scripts/deploy-vercel.mjs",
+    "preview:vercel": "zx scripts/preview-vercel.mjs"
+  },
+  "devDependencies": {
+    "zx": "^8.3.0"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}
