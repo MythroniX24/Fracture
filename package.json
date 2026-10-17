@@ -4,15 +4,13 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "zx scripts/build.mjs",
+    "build": "npm run build --workspace @fracture/shared && npm run build --workspace @fracture/server && npm run build --workspace @fracture/client",
     "dev": "node scripts/dev.mjs",
-    "test": "zx scripts/test.mjs",
+    "test": "npm run test --workspaces --if-present",
+    "typecheck": "npm run typecheck --workspaces --if-present",
     "smoke": "node scripts/smoke.mjs",
     "smoke:solo": "node scripts/smoke-solo.mjs",
-    "typecheck": "zx scripts/typecheck.mjs",
-    "start": "zx scripts/start.mjs",
-    "deploy:vercel": "zx scripts/deploy-vercel.mjs",
-    "preview:vercel": "zx scripts/preview-vercel.mjs"
+    "start": "npm run start --workspace @fracture/server"
   },
   "devDependencies": {
     "zx": "^8.3.0"

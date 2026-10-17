@@ -95,24 +95,41 @@ process somewhere else; Vercel does **not** run the authoritative simulation.
 
 1. Push this repository to GitHub.
 2. In Vercel, create a project from that GitHub repo, choosing the `main` branch.
-3. Set **Framework Preset** to `Vite`, keep the default Root Directory and Build Command (`npm run build
-   -w @fracture/client` or Vercel's auto-detect), and leave Output Directory as `apps/client/dist`.
+3. Leave **Root Directory** at the repository root. The committed `vercel.json` already sets the
+   framework, install command, build command and output directory, so no manual build configuration is
+   needed:
+   - install: `npm install` (npm workspaces, uses the committed `package-lock.json`)
+   - build: `npm run build --workspace @fracture/client`
+   - output: `apps/client/dist`
 4. Under **Environment Variables**, add:
-   - `VITE_SERVER_WS_URL` → the WebSocket URL of your Shape A or Shape B server
-     (e.g. `wss://game.your-domain.example/ws`). The client reads this at build time.
+   - `VITE_SERVER_WS_URL` → the WebSocket URL of your Shape A or Shape B server. The client reads this at
+     build time, so it must be set **before** the build runs. Use `wss://` whenever the page is served
+     over HTTPS — browsers block `ws://` from an HTTPS page.
+     A same-origin value also works: if a reverse proxy on the same domain forwards `/ws` to the game
+     server, set `VITE_SERVER_WS_URL=wss://<your-vercel-domain>/ws`.
    - Any other client-visible variables the app needs at runtime.
 5. Deploy.
 
-The rest of the deployment checklist in Section 6 still applies. For cockpit guidance, use Vercel's own
-environment-variable UI and project settings; the guide above is an approximation.
+**Why the client build compiles `packages/shared` first.** The shared package is consumed through its
+compiled `dist/`, and `dist/` is git-ignored (build output). A fresh clone therefore has no
+`@fracture/shared` and the TypeScript step fails with `TS2307: Cannot find module '@fracture/shared'`.
+The client's `build` script compiles the shared package before type-checking, so any fresh environment
+(Vercel, CI, a clean checkout) works without a manual pre-step.
+
+If your Vercel project already has **Root Directory** set to `apps/client`, the root `vercel.json` is not
+read — the committed `apps/client/vercel.json` covers that case (it installs the workspace from the repo
+root and outputs `dist`). Either layout works.
+
+The rest of the deployment checklist in Section 6 still applies.
 
 **What Vercel does not do for you:**
 
 - Run the WebSocket game server. That is still a separate Shape A/B process.
 - Provide a single URL that serves both the static client and the game socket. If you want one origin,
   put a reverse proxy in front (see Shape A) or use a different setup.
-- Auto-discover server-side types or the `packages/shared` build. The frontend build only needs the
-  client bundle; the server build is separate.
+- Run a WebSocket endpoint. Vercel's serverless/edge functions cannot hold a 30 Hz socket loop, so `/ws`
+  must reach a real process (Shape A or B).
+- Serve the game and the client from one origin unless you configure a proxy yourself.
 
 ## 5. Host requirements and sizing
 

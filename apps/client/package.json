@@ -5,12 +5,10 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc -p tsconfig.json --noEmit && vite build",
+    "build": "npm --prefix ../../packages/shared run build && tsc -p tsconfig.json --noEmit && vite build",
     "preview": "vite preview",
     "typecheck": "tsc -p tsconfig.json --noEmit",
-    "test": "vitest run",
-    "deploy:vercel": "zx scripts/deploy-vercel.mjs",
-    "preview:vercel": "zx scripts/preview-vercel.mjs"
+    "test": "vitest run"
   },
   "dependencies": {
     "@fracture/shared": "*",
